@@ -6,6 +6,10 @@ const control = require('../controllers/controller')
 // const jwt = require('../middlewares/jwt')
 // const multer = require('../middlewares/multer')
 
+router.get("/", (req, res) => {
+    res.status(200).json({Message: "Bem vindo !"})
+})
+
 router.post("/createPlan", control.createPlan)
 router.get("/getPlans", control.getPlans)
 router.post("/updatePlan", control.updatePlan)

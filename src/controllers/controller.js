@@ -37,7 +37,7 @@ async function getDocs(req, res) {
 async function getRamais(req, res) {
     try {
         const getRamais = await Ramais.find({})
-        return res.status(200).json(getRamais)
+        return res.status(200).json({getRamais})
     } catch (error) {
         return res.status(500).json({ message: 'Erro ao buscar ramais' });
     }

@@ -9,28 +9,11 @@ const control = require('../controllers/controller')
 router.get("/", (req, res) => {
     res.status(200).json({ Message: "Bem vindo !" })
 })
-router.get("/a", (req, res) => {
-    res.status(200).json({ Message: "página 2" })
-})
+
 
 router.post("/createPlan", control.createPlan)
-// router.get("/getPlans", control.getPlans)
+router.get("/getPlans", control.getPlans)
 
-const {Planos} = require('../models/model')
-const mongoose = require('mongoose')
-
-router.get("/getPlans", async (req, res) => {
-    try {
-        let plans = await Planos.find({})
-        if (plans.length == 0) {
-            return res.status(200).json({ message: "Não há planos cadastrados no DataBase!" })
-        }
-        return res.status(200).json(plans)
-    }
-    catch (error) {
-        return res.status(500).json({ message: 'Erro ao buscar planos!' });
-    }
-})
 router.post("/updatePlan", control.updatePlan)
 
 router.post("/createDoc", multer.upload.single("file"), control.createDoc)

@@ -39,7 +39,7 @@ async function getRamais(req, res) {
         const getRamais = await Ramais.find({})
         return res.status(200).json(getRamais)
     } catch (error) {
-
+        return res.status(500).json({ message: 'Erro ao buscar ramais' });
     }
 }
 
@@ -141,6 +141,20 @@ async function updateDoc(req, res) { // Atualiza "Documento" no DataBase
 
 
 
+async function createRamal(req, res) {
+    let { setor, ramal } = req.body
+    setor = setor.toLowerCase()
+    let create = new Date()
+    let update = create
+    try {
+        const newRamal = await Ramais.create({ setor, ramal, create, update })
+        return res.status(201).json({ Message: "Contato criado com sucesso!" })
+    } catch (error) {
+        return res.status(500).json({Message: "Ocorreu algum erro."})
+    }
+}
+
+
 
 module.exports = {
     createPlan,
@@ -150,4 +164,7 @@ module.exports = {
     createDoc,
     getDocs,
     updateDoc,
+
+    createRamal,
+    getRamais,
 }

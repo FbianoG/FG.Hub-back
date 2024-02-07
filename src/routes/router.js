@@ -20,5 +20,6 @@ router.get("/getDocs", control.getDocs)
 router.post("/updateDoc", multer.upload.single("file"), control.updateDoc)
 
 router.get("/getRamais", control.getRamais)
+router.post("/createRamal", control.createRamal)
 
 module.exports = router

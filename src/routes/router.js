@@ -9,6 +9,9 @@ const control = require('../controllers/controller')
 router.get("/", (req, res) => {
     res.status(200).json({Message: "Bem vindo !"})
 })
+router.get("/a", (req, res) => {
+    res.status(200).json({Message: "página 2"})
+})
 
 router.post("/createPlan", control.createPlan)
 router.get("/getPlans", control.getPlans)

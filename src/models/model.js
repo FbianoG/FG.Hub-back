@@ -33,7 +33,17 @@ const Docs = mongoose.model('docs', {
 })
 
 
+
+const Ramais = mongoose.model('ramais', {
+    setor: { type: String, unique: true },
+    ramal: { type: String, unique: true },
+    create: Date,
+    update: Date,
+})
+
+
 module.exports = {
     Planos,
     Docs,
+    Ramais,
 }

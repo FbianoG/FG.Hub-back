@@ -1,4 +1,4 @@
-const { Planos, Docs } = require("../models/model")
+const { Planos, Docs, Ramais } = require("../models/model")
 const path = require('path');
 const fs = require('fs')
 
@@ -33,6 +33,18 @@ async function getDocs(req, res) {
         res.status(500).json({ message: 'Erro ao buscar ramais' });
     }
 }
+
+async function getRamais(req, res) {
+    try {
+        const getRamais = await Ramais.find({})
+        return res.status(200).json(getRamais)
+    } catch (error) {
+
+    }
+}
+
+
+
 
 // POST
 
@@ -74,7 +86,6 @@ async function updatePlan(req, res) {
         res.status(500).json({ message: 'Ocorreu algum erro ao atualizar o plano!' });
     }
 }
-
 
 
 
@@ -135,7 +146,7 @@ module.exports = {
     createPlan,
     getPlans,
     updatePlan,
-    
+
     createDoc,
     getDocs,
     updateDoc,

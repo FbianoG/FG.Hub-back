@@ -3,7 +3,7 @@ const path = require('path')
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, __dirname, 'public', 'pdf', file.filename) // diretório parte do root até à pasta alvo (tem que criar a pasta antes para funcionar)
+        cb(null, "C:/Users/boris/OneDrive/Área de Trabalho/Programação/Project Olimpus/public/pdf") // diretório parte do root até à pasta alvo (tem que criar a pasta antes para funcionar)
     },
     filename: function (req, file, cb) {
         cb(null, Date.now() + path.extname(file.originalname))

@@ -17,6 +17,7 @@ router.post("/createPlan", control.createPlan)
 // router.get("/getPlans", control.getPlans)
 
 const {Planos} = require('../models/model')
+const mongoose = require('mongoose')
 
 router.get("/getPlans", async (req, res) => {
     try {

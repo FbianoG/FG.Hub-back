@@ -21,5 +21,10 @@ router.post("/updateDoc", multer.upload.single("file"), control.updateDoc)
 
 router.get("/getRamais", control.getRamais)
 router.post("/createRamal", control.createRamal)
+router.post("/updateRamal", control.updateRamal)
+
+router.get("/getSites", control.getSites)
+router.post("/createSite", control.createSite)
+router.post("/updateSite", control.updadeSite)
 
 module.exports = router

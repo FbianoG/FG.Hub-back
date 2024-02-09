@@ -32,11 +32,17 @@ const Docs = mongoose.model('docs', {
     update: Date,
 })
 
-
-
 const Ramais = mongoose.model('ramais', {
     setor: { type: String, unique: true },
     ramal: { type: String, unique: true },
+    create: Date,
+    update: Date,
+})
+
+const Sites = mongoose.model('sites', {
+    name: { type: String, unique: true },
+    web: { type: String, unique: true },
+    src: String,
     create: Date,
     update: Date,
 })
@@ -46,4 +52,5 @@ module.exports = {
     Planos,
     Docs,
     Ramais,
+    Sites,
 }

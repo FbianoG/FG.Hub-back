@@ -1,4 +1,4 @@
-const { Planos, Docs, Ramais } = require("../models/model")
+const { Planos, Docs, Ramais, Sites } = require("../models/model")
 const path = require('path');
 const fs = require('fs')
 
@@ -43,6 +43,14 @@ async function getRamais(req, res) {
     }
 }
 
+async function getSites(req, res) {
+    try {
+        const getSites = await Sites.find({})
+        return res.status(200).json(getSites)
+    } catch (error) {
+        return res.status(500).json({ Message: "Ocorreu algum erro!" })
+    }
+}
 
 
 
@@ -86,7 +94,6 @@ async function updatePlan(req, res) {
         res.status(500).json({ message: 'Ocorreu algum erro ao atualizar o plano!' });
     }
 }
-
 
 
 async function createDoc(req, res) {
@@ -140,7 +147,6 @@ async function updateDoc(req, res) { // Atualiza "Documento" no DataBase
 }
 
 
-
 async function createRamal(req, res) {
     let { setor, ramal } = req.body
     setor = setor.toLowerCase()
@@ -150,10 +156,47 @@ async function createRamal(req, res) {
         const newRamal = await Ramais.create({ setor, ramal, create, update })
         return res.status(201).json({ Message: "Contato criado com sucesso!" })
     } catch (error) {
-        return res.status(500).json({Message: "Ocorreu algum erro."})
+        return res.status(500).json({ Message: "Ocorreu algum erro." })
     }
 }
 
+async function updateRamal(req, res) {
+    let { _id, setor, ramal } = req.body
+    const update = new Date()
+    setor = setor.toLowerCase()
+    try {
+        const upRamal = await Ramais.findByIdAndUpdate({ _id }, { setor, ramal, update })
+        return res.status(201).json({ Message: "Ramal atualizado com sucesso!" })
+    } catch (error) {
+        return res.status(500).json({ Message: "Ocorreu algum erro!" })
+    }
+}
+
+async function createSite(req, res) {
+    let { name, web, src } = req.body
+    const create = new Date()
+    const update = create
+    name = name.toLowerCase()
+    try {
+        const newSite = await Sites.create({ name, web, src, create, update })
+        return res.status(201).json({ Message: "Site criado com sucesso!", Data: newSite })
+    } catch (error) {
+        return res.status(500).json({ Message: "Ocorreu algum erro!" })
+    }
+
+}
+
+async function updadeSite(req, res) {
+    let { _id, name, src, web } = req.body
+    name = name.toLowerCase()
+    const update = new Date()
+    try {
+        const updadeSite = await Sites.findByIdAndUpdate({ _id }, { name, web, src, update })
+        return res.status(200).json({ Message: "Site atualizado com sucesso!" })
+    } catch (error) {
+        return res.status(500).json({ Message: "Ocorreu algum erro!" })
+    }
+}
 
 
 module.exports = {
@@ -167,4 +210,9 @@ module.exports = {
 
     createRamal,
     getRamais,
+    updateRamal,
+
+    getSites,
+    createSite,
+    updadeSite
 }

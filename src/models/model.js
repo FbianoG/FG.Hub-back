@@ -2,8 +2,6 @@ const mongoose = require('mongoose')
 
 
 
-
-
 const Planos = mongoose.model('planos', {
     name: { type: String, unique: true, required: true },
     login: String,

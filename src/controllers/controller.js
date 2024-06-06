@@ -103,7 +103,7 @@ async function createTerm(req, res) {
         let create = new Date()
         let update = create
         const createDocs = await Docs.create({ name, srcToken, src, category, create, update })
-        return res.status(201).json({ Message: "Arquivo criado com sucesso!" })
+        return res.status(201).json({ Message: "Documento criado com sucesso!" })
     } catch (error) {
         console.log({ status: 500, message: "Ocorreu algum erro!", error })
         res.status(500).json({ status: 500, message: "Ocorreu algum erro!", error })
@@ -194,11 +194,6 @@ async function deleteIten(req, res) {
     }
 }
 
-
-async function addImage(req, res) {
-
-    console.log(req.body)
-}
 
 
 module.exports = {

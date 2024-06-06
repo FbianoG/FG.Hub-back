@@ -25,6 +25,7 @@ const Planos = mongoose.model('planos', {
 const Docs = mongoose.model('docs', {
     name: { type: String, unique: true, required: true },
     src: { type: String, unique: true, required: true },
+    srcToken: { type: String, unique: true, required: true },
     category: String,
     create: Date,
     update: Date,
@@ -45,10 +46,16 @@ const Sites = mongoose.model('sites', {
     update: Date,
 })
 
+const User = mongoose.model('user', {
+    username: { type: String, unique: true, required: true },
+    password: { type: String, required: true }
+})
+
 
 module.exports = {
     Planos,
     Docs,
     Ramais,
     Sites,
+    User,
 }

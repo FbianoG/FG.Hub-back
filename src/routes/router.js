@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const multer = require('../middlewares/multer')
+const jwt = require('../middlewares/jwt')
 const control = require('../controllers/controller')
 
 
@@ -11,20 +11,24 @@ router.get("/", (req, res) => {
 })
 
 
-router.post("/createPlan", control.createPlan)
-router.get("/getPlans", control.getPlans)
-router.post("/updatePlan", control.updatePlan)
+router.post("/login", control.login)
 
-router.post("/createDoc", multer.upload.single("file"), control.createDoc)
-router.get("/getDocs", control.getDocs)
-router.post("/updateDoc", multer.upload.single("file"), control.updateDoc)
+router.post("/createPlan", jwt.verifyToken, control.createPlan)
+router.get("/getPlans", jwt.verifyToken, control.getPlans)
+router.put("/updatePlan",jwt.verifyToken, control.updatePlan)
+router.post("/deleteIten",jwt.verifyToken, control.deleteIten)
 
-router.get("/getRamais", control.getRamais)
-router.post("/createRamal", control.createRamal)
-router.post("/updateRamal", control.updateRamal)
+router.post("/createTerm",jwt.verifyToken, control.createTerm)
+router.get("/getTerms",jwt.verifyToken, control.getTerms)
+router.post("/updateTerm",jwt.verifyToken, control.updateTerm)
 
-router.get("/getSites", control.getSites)
-router.post("/createSite", control.createSite)
-router.post("/updateSite", control.updadeSite)
+router.get("/getRamais",jwt.verifyToken, control.getRamais)
+router.post("/createRamal",jwt.verifyToken, control.createRamal)
+router.post("/updateRamal",jwt.verifyToken, control.updateRamal)
+
+router.get("/getSites",jwt.verifyToken, control.getSites)
+router.post("/createSite",jwt.verifyToken, control.createSite)
+router.put("/updateSite",jwt.verifyToken, control.updadeSite)
+
 
 module.exports = router

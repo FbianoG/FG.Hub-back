@@ -1,19 +1,26 @@
-const { Planos, Docs, Ramais, Sites } = require("../models/model")
-const path = require('path');
-const fs = require('fs')
-
-
-
+const { Planos, Docs, Ramais, Sites, User } = require("../models/model")
+const jwt = require('../middlewares/jwt')
 
 
 // GET
 
+async function login(req, res) {
+    let { username, password } = req.body.dataForm
+    try {
+        if (!username || !password) return res.status(400).json({ message: 'Preencha todos os campos.' })
+        const user = await User.findOne({ username, password })
+        if (!user) return res.status(400).json({ message: 'Login ou senha inválidos!' })
+        const token = await jwt.createToken(user._id)
+        return res.status(200).json({ message: 'Usuário conectado!', token })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: 'Erro internno de servidor.' })
+    }
+}
+
 async function getPlans(req, res) {  // Busca todos os "planos" no DataBase
     try {
-        let plans = await Planos.find({})
-        if (plans.length == 0) {
-            return res.status(200).json({ message: "Não há planos cadastrados no DataBase!" })
-        }
+        let plans = await Planos.find().sort({ name: 1 })
         return res.status(200).json(plans)
     }
     catch (error) {
@@ -21,12 +28,10 @@ async function getPlans(req, res) {  // Busca todos os "planos" no DataBase
     }
 }
 
-async function getDocs(req, res) {
+async function getTerms(req, res) {
     try {
-        let docs = await Docs.find({})
-        // console.log(req.headers.Authorization)
-        // console.log(req.userId)
-        return res.json(docs)
+        const terms = await Docs.find({}).sort({ name: 1 })
+        return res.status(200).json(terms)
     }
     catch (error) {
         console.log(error)
@@ -36,7 +41,7 @@ async function getDocs(req, res) {
 
 async function getRamais(req, res) {
     try {
-        const getRamais = await Ramais.find({})
+        const getRamais = await Ramais.find({}).sort({ setor: 1 })
         return res.status(200).json(getRamais)
     } catch (error) {
         return res.status(500).json({ message: 'Erro ao buscar ramais' });
@@ -45,7 +50,7 @@ async function getRamais(req, res) {
 
 async function getSites(req, res) {
     try {
-        const getSites = await Sites.find({})
+        const getSites = await Sites.find({}).sort({ name: 1 })
         return res.status(200).json(getSites)
     } catch (error) {
         return res.status(500).json({ Message: "Ocorreu algum erro!" })
@@ -57,15 +62,14 @@ async function getSites(req, res) {
 // POST
 
 async function createPlan(req, res) {
-    let { name, login, password } = req.body
-    name = name.toLowerCase()
+    let { name, login, password, web, data } = req.body.dataForm
     const create = new Date()
     const update = create
-    const active = false
     try {
-        const newPlan = await Planos.create({ create, active, name, login, password, update, web: "", data: { cod: "", tel: "", email: "", att: "", guia: "", senha: "", obs: "" } })
-        return res.status(201).json({ message: "Plano criado com sucesso", newPlan })
-
+        if (!name) return res.status(400).json({ message: 'Forneça ao menos um nome.' })
+        name = name.toLowerCase()
+        const newPlan = await Planos.create({ name, login, password, web, data, create, update })
+        return res.status(201).json({ message: "Plano criado com sucesso" })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: "Ocorreu algum erro no servidor:" })
@@ -74,19 +78,11 @@ async function createPlan(req, res) {
 
 async function updatePlan(req, res) {
     try {
-        let activeStatus = req.body.active
-        if (activeStatus == "0") {
-            activeStatus = false
-        } else {
-            activeStatus = true
-        }
         const update = new Date()
-        let { _id, name, login, password, web, cod, tel, email, att, guia, senha, obs } = req.body
+        let { _id, name, login, password, web, data } = req.body.dataForm
+        if (!_id) return res.status(400).json({ message: 'Plano não encontrado.' })
         name = name.toLowerCase()
-        const PlanUpdate = await Planos.findOneAndUpdate({ _id: _id }, {
-            name, login, password, web, data: { cod, tel, email, att, guia, senha, obs, }, update, active: activeStatus,
-        })
-        console.log(PlanUpdate)
+        const PlanUpdate = await Planos.findOneAndUpdate({ _id: _id }, { name, login, password, web, data, update })
         return res.status(204).send({ Message: "Plano atualizado com sucesso!" })
     }
     catch (error) {
@@ -96,20 +92,17 @@ async function updatePlan(req, res) {
 }
 
 
-async function createDoc(req, res) {
+
+
+async function createTerm(req, res) {
+    let { name, category, src, srcToken } = req.body.dataForm
+    console.log(req.body.dataForm)
     try {
-        let { name, category } = req.body
-        const file = req.file
-        if (!file || !name || !category) {
-            // por causa do "Multer" o file é salvo na pasta antes, 
-            const filePath = path.join(`C:/Users/boris/OneDrive/Área de Trabalho/Programação/Project Olimpus/public/pdf/${file.filename}`) // localizar arquivo na pasta
-            fs.unlinkSync(filePath) // Excluir arquivo da pasta
-            return res.status(222).json({ message: "Todos os campos são obrigatórios!" })
-        }
+        if (!name || !category || !src || !srcToken) return res.status(400).json({ message: 'Preencha todos os campos.' })
         name = name.toLowerCase()
         let create = new Date()
         let update = create
-        const createDocs = await Docs.create({ name, src: file.filename, category, create, update })
+        const createDocs = await Docs.create({ name, srcToken, src, category, create, update })
         return res.status(201).json({ Message: "Arquivo criado com sucesso!" })
     } catch (error) {
         console.log({ status: 500, message: "Ocorreu algum erro!", error })
@@ -117,30 +110,14 @@ async function createDoc(req, res) {
     }
 }
 
-async function updateDoc(req, res) { // Atualiza "Documento" no DataBase
+async function updateTerm(req, res) { // Atualiza "Documento" no DataBase
+    let { _id, name, category, src, srcToken } = req.body.dataForm
     try {
-        let { _id, name, category } = req.body
-        if (!_id || !name || !category) {
-            return res.status(400).json({ message: "Preencha todos os campos do 'Formulário de Atualização'" })
-        }
+        if (!name || !category) return res.status(400).json({ message: 'Preencha todos os campos.' })
         name = name.toLowerCase()
         const update = new Date()
-        const file = req.file
-        const originalDoc = await Docs.findOne({ _id }) // localizar o documento no DataBase
-        const lastSrc = originalDoc.src // Extrair nome do pdf salvo no "Documento"
-        if (file) {
-            // excluir pdf  usando "FS"
-            const filePath = path.join(`C:/Users/boris/OneDrive/Área de Trabalho/Programação/Project Olimpus/public/pdf/${lastSrc}`) // localizar arquivo na pasta
-            try {
-                fs.unlinkSync(filePath) // Excluir arquivo da pasta
-                console.log(`Arquivo anterior (${lastSrc}) excluído com sucesso.`)
-            } catch (prosseguir) { }
-            const updateDocs = await Docs.findOneAndUpdate({ _id }, { name, category, src: file.filename, update })
-            return res.status(204).json({ Message: "Documento atualizado com sucesso!" })
-        } else {
-            let updateDocs = await Docs.findOneAndUpdate({ _id }, { name, category, update })
-            return res.status(204).json({ Message: "Documento atualizado com sucesso!" })
-        }
+        const updateDocs = await Docs.findOneAndUpdate({ _id }, { name, category, src, srcToken, update })
+        return res.status(204).json({ Message: "Documento atualizado com sucesso!" })
     } catch (error) {
         return res.status(500).json({ message: "Ocorreu algum erro!" });
     }
@@ -148,7 +125,7 @@ async function updateDoc(req, res) { // Atualiza "Documento" no DataBase
 
 
 async function createRamal(req, res) {
-    let { setor, ramal } = req.body
+    let { setor, ramal } = req.body.dataForm
     setor = setor.toLowerCase()
     let create = new Date()
     let update = create
@@ -156,12 +133,12 @@ async function createRamal(req, res) {
         const newRamal = await Ramais.create({ setor, ramal, create, update })
         return res.status(201).json({ Message: "Contato criado com sucesso!" })
     } catch (error) {
-        return res.status(500).json({ Message: "Ocorreu algum erro." })
+        return res.status(500).json({ Message: "Erro interno de sevidor." })
     }
 }
 
 async function updateRamal(req, res) {
-    let { _id, setor, ramal } = req.body
+    let { _id, setor, ramal } = req.body.dataForm
     const update = new Date()
     setor = setor.toLowerCase()
     try {
@@ -172,12 +149,14 @@ async function updateRamal(req, res) {
     }
 }
 
+
 async function createSite(req, res) {
-    let { name, web, src } = req.body
+    let { name, web, src } = req.body.dataForm
     const create = new Date()
     const update = create
-    name = name.toLowerCase()
     try {
+        if (!name) return res.status(400).json({ message: 'Forneça ao menos um nome.' })
+        name = name.toLowerCase()
         const newSite = await Sites.create({ name, web, src, create, update })
         return res.status(201).json({ Message: "Site criado com sucesso!", Data: newSite })
     } catch (error) {
@@ -187,10 +166,11 @@ async function createSite(req, res) {
 }
 
 async function updadeSite(req, res) {
-    let { _id, name, src, web } = req.body
-    name = name.toLowerCase()
+    let { _id, name, src, web } = req.body.dataForm
     const update = new Date()
     try {
+        if (!name) return res.status(400).json({ message: 'Forneça ao menos um nome.' })
+        name = name.toLowerCase()
         const updadeSite = await Sites.findByIdAndUpdate({ _id }, { name, web, src, update })
         return res.status(200).json({ Message: "Site atualizado com sucesso!" })
     } catch (error) {
@@ -199,14 +179,40 @@ async function updadeSite(req, res) {
 }
 
 
+async function deleteIten(req, res) {
+    const { exType, _id } = req.body
+    try {
+        if (!_id || !exType) return res.status(400).json({ message: 'Elemento não encontrado.' })
+        else if (exType === 'plan') await Planos.findByIdAndDelete({ _id })
+        else if (exType === 'term') await Docs.findByIdAndDelete({ _id })
+        else if (exType === 'ramal') await Ramais.findByIdAndDelete({ _id })
+        else if (exType === 'site') await Sites.findByIdAndDelete({ _id })
+        else return res.status(400).json({ message: 'Elemento não encontrado.' })
+        return res.status(200).json({ message: 'Elemento excluído com sucesso!' })
+    } catch (error) {
+        return res.status(500).json({ message: 'Erro interno de servidor.' })
+    }
+}
+
+
+async function addImage(req, res) {
+
+    console.log(req.body)
+}
+
+
 module.exports = {
     createPlan,
     getPlans,
     updatePlan,
 
-    createDoc,
-    getDocs,
-    updateDoc,
+
+    deleteIten,
+
+
+    createTerm,
+    getTerms,
+    updateTerm,
 
     createRamal,
     getRamais,
@@ -214,5 +220,9 @@ module.exports = {
 
     getSites,
     createSite,
-    updadeSite
+    updadeSite,
+
+    login,
+
+
 }

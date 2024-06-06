@@ -1,6 +1,6 @@
 const express = require('express')
-const router = require('./src/routes/router')
-const DataBase = require('./src/dataBase/db')
+const router = require('./src/routes/router.js')
+const DataBase = require('./src/dataBase/db.js')
 require('dotenv').config()
 
 

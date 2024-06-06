@@ -6,8 +6,10 @@ const jwt = require('../middlewares/jwt')
 
 async function login(req, res) {
     let { username, password } = req.body.dataForm
+
     try {
         if (!username || !password) return res.status(400).json({ message: 'Preencha todos os campos.' })
+        username = username.toLowerCase()
         const user = await User.findOne({ username, password })
         if (!user) return res.status(400).json({ message: 'Login ou senha inválidos!' })
         const token = await jwt.createToken(user._id)
@@ -53,7 +55,7 @@ async function getSites(req, res) {
         const getSites = await Sites.find({}).sort({ name: 1 })
         return res.status(200).json(getSites)
     } catch (error) {
-        return res.status(500).json({ Message: "Ocorreu algum erro!" })
+        return res.status(500).json({ message: "Ocorreu algum erro!" })
     }
 }
 
@@ -83,7 +85,7 @@ async function updatePlan(req, res) {
         if (!_id) return res.status(400).json({ message: 'Plano não encontrado.' })
         name = name.toLowerCase()
         const PlanUpdate = await Planos.findOneAndUpdate({ _id: _id }, { name, login, password, web, data, update })
-        return res.status(204).send({ Message: "Plano atualizado com sucesso!" })
+        return res.status(201).send({ message: "Plano atualizado com sucesso!" })
     }
     catch (error) {
         console.log(error);
@@ -96,14 +98,13 @@ async function updatePlan(req, res) {
 
 async function createTerm(req, res) {
     let { name, category, src, srcToken } = req.body.dataForm
-    console.log(req.body.dataForm)
     try {
         if (!name || !category || !src || !srcToken) return res.status(400).json({ message: 'Preencha todos os campos.' })
         name = name.toLowerCase()
         let create = new Date()
         let update = create
         const createDocs = await Docs.create({ name, srcToken, src, category, create, update })
-        return res.status(201).json({ Message: "Documento criado com sucesso!" })
+        return res.status(201).json({ message: "Documento criado com sucesso!" })
     } catch (error) {
         console.log({ status: 500, message: "Ocorreu algum erro!", error })
         res.status(500).json({ status: 500, message: "Ocorreu algum erro!", error })
@@ -117,7 +118,8 @@ async function updateTerm(req, res) { // Atualiza "Documento" no DataBase
         name = name.toLowerCase()
         const update = new Date()
         const updateDocs = await Docs.findOneAndUpdate({ _id }, { name, category, src, srcToken, update })
-        return res.status(204).json({ Message: "Documento atualizado com sucesso!" })
+
+        return res.status(201).json({ message: "Documento atualizado com sucesso!" })
     } catch (error) {
         return res.status(500).json({ message: "Ocorreu algum erro!" });
     }
@@ -131,9 +133,9 @@ async function createRamal(req, res) {
     let update = create
     try {
         const newRamal = await Ramais.create({ setor, ramal, create, update })
-        return res.status(201).json({ Message: "Contato criado com sucesso!" })
+        return res.status(201).json({ message: "Contato criado com sucesso!" })
     } catch (error) {
-        return res.status(500).json({ Message: "Erro interno de sevidor." })
+        return res.status(500).json({ message: "Erro interno de sevidor." })
     }
 }
 
@@ -143,9 +145,9 @@ async function updateRamal(req, res) {
     setor = setor.toLowerCase()
     try {
         const upRamal = await Ramais.findByIdAndUpdate({ _id }, { setor, ramal, update })
-        return res.status(201).json({ Message: "Ramal atualizado com sucesso!" })
+        return res.status(201).json({ message: "Ramal atualizado com sucesso!" })
     } catch (error) {
-        return res.status(500).json({ Message: "Ocorreu algum erro!" })
+        return res.status(500).json({ message: "Ocorreu algum erro!" })
     }
 }
 
@@ -158,9 +160,9 @@ async function createSite(req, res) {
         if (!name) return res.status(400).json({ message: 'Forneça ao menos um nome.' })
         name = name.toLowerCase()
         const newSite = await Sites.create({ name, web, src, create, update })
-        return res.status(201).json({ Message: "Site criado com sucesso!", Data: newSite })
+        return res.status(201).json({ message: "Site criado com sucesso!", Data: newSite })
     } catch (error) {
-        return res.status(500).json({ Message: "Ocorreu algum erro!" })
+        return res.status(500).json({ message: "Ocorreu algum erro!" })
     }
 
 }
@@ -172,9 +174,9 @@ async function updadeSite(req, res) {
         if (!name) return res.status(400).json({ message: 'Forneça ao menos um nome.' })
         name = name.toLowerCase()
         const updadeSite = await Sites.findByIdAndUpdate({ _id }, { name, web, src, update })
-        return res.status(200).json({ Message: "Site atualizado com sucesso!" })
+        return res.status(200).json({ message: "Site atualizado com sucesso!" })
     } catch (error) {
-        return res.status(500).json({ Message: "Ocorreu algum erro!" })
+        return res.status(500).json({ message: "Ocorreu algum erro!" })
     }
 }
 

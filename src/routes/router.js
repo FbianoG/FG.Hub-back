@@ -12,23 +12,24 @@ router.get("/", (req, res) => {
 
 
 router.post("/login", control.login)
+router.post("/createUser", control.createUser)
 
 router.post("/createPlan", jwt.verifyToken, control.createPlan)
 router.get("/getPlans", jwt.verifyToken, control.getPlans)
-router.put("/updatePlan",jwt.verifyToken, control.updatePlan)
-router.post("/deleteIten",jwt.verifyToken, control.deleteIten)
+router.put("/updatePlan", jwt.verifyToken, control.updatePlan)
+router.post("/deleteIten", jwt.verifyToken, control.deleteIten)
 
-router.post("/createTerm",jwt.verifyToken, control.createTerm)
-router.get("/getTerms",jwt.verifyToken, control.getTerms)
-router.post("/updateTerm",jwt.verifyToken, control.updateTerm)
+router.post("/createTerm", jwt.verifyToken, control.createTerm)
+router.get("/getTerms", jwt.verifyToken, control.getTerms)
+router.post("/updateTerm", jwt.verifyToken, control.updateTerm)
 
-router.get("/getRamais",jwt.verifyToken, control.getRamais)
-router.post("/createRamal",jwt.verifyToken, control.createRamal)
-router.post("/updateRamal",jwt.verifyToken, control.updateRamal)
+router.get("/getRamais", jwt.verifyToken, control.getRamais)
+router.post("/createRamal", jwt.verifyToken, control.createRamal)
+router.post("/updateRamal", jwt.verifyToken, control.updateRamal)
 
-router.get("/getSites",jwt.verifyToken, control.getSites)
-router.post("/createSite",jwt.verifyToken, control.createSite)
-router.put("/updateSite",jwt.verifyToken, control.updadeSite)
+router.get("/getSites", jwt.verifyToken, control.getSites)
+router.post("/createSite", jwt.verifyToken, control.createSite)
+router.put("/updateSite", jwt.verifyToken, control.updadeSite)
 
 
 module.exports = router

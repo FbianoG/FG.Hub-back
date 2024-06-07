@@ -3,7 +3,8 @@ const mongoose = require('mongoose')
 
 
 const Planos = mongoose.model('planos', {
-    name: { type: String, unique: true, required: true },
+    userId: { type: String, required: true },
+    name: { type: String, required: true },
     login: String,
     password: String,
     web: String,
@@ -21,26 +22,28 @@ const Planos = mongoose.model('planos', {
     active: Boolean,
 })
 
-
 const Docs = mongoose.model('docs', {
-    name: { type: String, unique: true, required: true },
-    src: { type: String, unique: true, required: true },
-    srcToken: { type: String, unique: true, required: true },
+    userId: { type: String, required: true },
+    name: { type: String, required: true },
+    src: { type: String, required: true },
+    srcToken: { type: String, required: true },
     category: String,
     create: Date,
     update: Date,
 })
 
 const Ramais = mongoose.model('ramais', {
-    setor: { type: String, unique: true },
-    ramal: { type: String, unique: true },
+    userId: { type: String, required: true },
+    setor: { type: String, required: true },
+    ramal: { type: String, required: true },
     create: Date,
     update: Date,
 })
 
 const Sites = mongoose.model('sites', {
-    name: { type: String, unique: true },
-    web: { type: String, unique: true },
+    userId: { type: String, required: true },
+    name: { type: String, required: true },
+    web: { type: String, required: true },
     src: String,
     create: Date,
     update: Date,

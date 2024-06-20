@@ -13,6 +13,7 @@ router.get("/", (req, res) => {
 
 router.post("/login", control.login)
 router.post("/createUser", control.createUser)
+router.post("/editUser", control.editUser) // ! vou ver se uso ainda
 
 router.post("/createPlan", jwt.verifyToken, control.createPlan)
 router.get("/getPlans", jwt.verifyToken, control.getPlans)
@@ -30,6 +31,10 @@ router.post("/updateRamal", jwt.verifyToken, control.updateRamal)
 router.get("/getSites", jwt.verifyToken, control.getSites)
 router.post("/createSite", jwt.verifyToken, control.createSite)
 router.put("/updateSite", jwt.verifyToken, control.updadeSite)
+
+router.get("/getDoctor", jwt.verifyToken, control.getDoctor)
+router.post("/createDoctor", jwt.verifyToken, control.createDoctor)
+router.put("/updateDoctor", jwt.verifyToken, control.updateDoctor)
 
 
 module.exports = router

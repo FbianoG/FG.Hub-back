@@ -49,16 +49,29 @@ const Sites = mongoose.model('sites', {
     update: Date,
 })
 
+const Doctor = mongoose.model('médicos', {
+    userId: { type: String, required: true },
+    name: { type: String, required: true },
+    cbo: { type: String, required: true },
+    crm: { type: String, required: true },
+    create: Date,
+    update: Date,
+})
+
 const User = mongoose.model('user', {
     username: { type: String, unique: true, required: true },
-    password: { type: String, required: true }
+    password: { type: String, required: true },
+    name: String,
+    cnes: String,
+    cnpj: String,
 })
 
 
 module.exports = {
+    User,
     Planos,
     Docs,
     Ramais,
     Sites,
-    User,
+    Doctor,
 }

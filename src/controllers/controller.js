@@ -1,4 +1,4 @@
-const { Planos, Docs, Ramais, Sites, User } = require("../models/model")
+const { Planos, Docs, Ramais, Sites, User, Doctor } = require("../models/model")
 const jwt = require('../middlewares/jwt')
 const { hashPassword, comparePassword } = require('../middlewares/bcrypt')
 require('dotenv').config()
@@ -14,7 +14,7 @@ async function login(req, res) {
         const userCompare = await comparePassword(password, user.password)
         if (!userCompare) return res.status(400).json({ message: 'Login ou senha inválidos!' })
         const token = await jwt.createToken(user._id)
-        return res.status(200).json({ auth: true, message: 'Usuário conectado!', token })
+        return res.status(200).json({ auth: true, message: 'Usuário conectado!', token, cnpj: user.cnpj, cnes: user.cnes, name: user.name })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: 'Erro internno de servidor.' })
@@ -35,6 +35,21 @@ async function createUser(req, res) {
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: 'Erro interno de servidor' })
+    }
+}
+
+async function editUser(req, res) { // ! vou ver se uso ainda
+    const { _id, hired, cnes, provider } = req.body.dataForm
+    let updateUser
+    try {
+        if (!_id) return res.status(404).json({ message: 'Usuário não encontrado.' })
+        if (provider) updateUser = await User.findByIdAndUpdate({ _id }, { hired, cnes, provider })
+        else updateUser = await User.findByIdAndUpdate({ _id }, { hired, cnes })
+
+        return res.status(200).json({ message: 'Usuário atualizado com sucesso!' })
+
+    } catch (error) {
+        return res.status(500).json({ message: 'Erro interno de servidor.' })
     }
 }
 
@@ -83,6 +98,15 @@ async function getSites(req, res) {
     }
 }
 
+async function getDoctor(req, res) {
+    const userId = req.userId
+    try {
+        const getDoctor = await Doctor.find({ userId }).sort({ name: 1 })
+        return res.status(200).json(getDoctor)
+    } catch (error) {
+        return res.status(500).json({ message: "Ocorreu algum erro!" })
+    }
+}
 
 // Create
 async function createPlan(req, res) {
@@ -147,6 +171,21 @@ async function createSite(req, res) {
 
 }
 
+async function createDoctor(req, res) {
+    let { name, crm, cbo } = req.body.dataForm
+    const userId = req.userId
+    const create = new Date()
+    const update = create
+    try {
+        if (!name) return res.status(400).json({ message: 'Forneça ao menos um nome.' })
+        name = name.toLowerCase()
+        const newDoctor = await Doctor.create({ userId, name, crm, cbo, create, update })
+        return res.status(201).json({ message: "Médico criado com sucesso!" })
+    } catch (error) {
+        return res.status(500).json({ message: "Ocorreu algum erro!" })
+    }
+
+}
 
 // Update
 async function updatePlan(req, res) {
@@ -184,10 +223,11 @@ async function updateTerm(req, res) {
 async function updateRamal(req, res) {
     let { _id, setor, ramal } = req.body.dataForm
     const userId = req.userId
+    console.log(req.body.dataForm)
     const update = new Date()
     setor = setor.toLowerCase()
     try {
-        const upRamal = await Ramais.findByIdAndUpdate({ _id, userIdF }, { setor, ramal, update })
+        const upRamal = await Ramais.findByIdAndUpdate({ _id, userId }, { setor, ramal, update })
         return res.status(201).json({ message: "Ramal atualizado com sucesso!" })
     } catch (error) {
         return res.status(500).json({ message: "Ocorreu algum erro!" })
@@ -208,6 +248,21 @@ async function updadeSite(req, res) {
     }
 }
 
+async function updateDoctor(req, res) {
+    let { _id, name, crm, cbo } = req.body.dataForm
+    const userId = req.userId
+    const update = new Date()
+    try {
+        if (!name) return res.status(400).json({ message: 'Forneça ao menos um nome.' })
+        name = name.toLowerCase()
+        const updateDoctor = await Doctor.findByIdAndUpdate({ _id, userId }, { name, crm, cbo })
+        return res.status(200).json({ message: "Médico atualizado com sucesso!" })
+    } catch (error) {
+        return res.status(500).json({ message: "Ocorreu algum erro!" })
+    }
+}
+
+
 // Delete
 async function deleteIten(req, res) {
     const { exType, _id } = req.body
@@ -218,6 +273,7 @@ async function deleteIten(req, res) {
         else if (exType === 'term') await Docs.findByIdAndDelete({ _id, userId })
         else if (exType === 'ramal') await Ramais.findByIdAndDelete({ _id, userId })
         else if (exType === 'site') await Sites.findByIdAndDelete({ _id, userId })
+        else if (exType === 'doctor') await Doctor.findByIdAndDelete({ _id, userId })
         else return res.status(400).json({ message: 'Elemento não encontrado.' })
         return res.status(200).json({ message: 'Elemento excluído com sucesso!' })
     } catch (error) {
@@ -228,4 +284,4 @@ async function deleteIten(req, res) {
 
 
 
-module.exports = { login, createUser, getPlans, getTerms, getRamais, createPlan, createTerm, createRamal, createSite, getSites, updatePlan, updateTerm, updateRamal, updadeSite, deleteIten }
+module.exports = { login, createUser, editUser, getPlans, getTerms, getRamais, getSites, getDoctor, createPlan, createTerm, createRamal, createSite, createDoctor, updatePlan, updateTerm, updateRamal, updadeSite, updateDoctor, deleteIten }

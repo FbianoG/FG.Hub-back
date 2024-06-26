@@ -126,14 +126,14 @@ async function createPlan(req, res) {
 }
 
 async function createTerm(req, res) {
-    let { name, category, src, srcToken } = req.body.dataForm
+    let { name, category, src, size } = req.body.dataForm
     const userId = req.userId
     try {
-        if (!name || !category || !src || !srcToken) return res.status(400).json({ message: 'Preencha todos os campos.' })
+        if (!name || !category || !src || !size) return res.status(400).json({ message: 'Preencha todos os campos.' })
         name = name.toLowerCase()
         let create = new Date()
         let update = create
-        const createDocs = await Docs.create({ userId, name, srcToken, src, category, create, update })
+        const createDocs = await Docs.create({ userId, name, size, src, category, create, update })
         return res.status(201).json({ message: "Documento criado com sucesso!" })
     } catch (error) {
         console.log({ status: 500, message: "Ocorreu algum erro!", error })
@@ -206,13 +206,13 @@ async function updatePlan(req, res) {
 }
 
 async function updateTerm(req, res) {
-    let { _id, name, category, src, srcToken } = req.body.dataForm
+    let { _id, name, category, src, size } = req.body.dataForm
     const userId = req.userId
     try {
         if (!name || !category) return res.status(400).json({ message: 'Preencha todos os campos.' })
         name = name.toLowerCase()
         const update = new Date()
-        const updateDocs = await Docs.findOneAndUpdate({ _id, userId }, { name, category, src, srcToken, update })
+        const updateDocs = await Docs.findOneAndUpdate({ _id, userId }, { name, category, src, size, update })
 
         return res.status(201).json({ message: "Documento atualizado com sucesso!" })
     } catch (error) {

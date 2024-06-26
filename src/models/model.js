@@ -26,7 +26,7 @@ const Docs = mongoose.model('docs', {
     userId: { type: String, required: true },
     name: { type: String, required: true },
     src: { type: String, required: true },
-    srcToken: { type: String, required: true },
+    size: { type: Number, required: true },
     category: String,
     create: Date,
     update: Date,

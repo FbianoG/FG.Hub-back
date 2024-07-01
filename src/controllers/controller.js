@@ -8,6 +8,7 @@ async function login(req, res) {
     let { username, password } = req.body.dataForm
     try {
         if (!username || !password) return res.status(400).json({ message: 'Preencha todos os campos.' })
+        username = username.trim()
         username = username.toLowerCase()
         const user = await User.findOne({ username })
         if (!user) return res.status(400).json({ message: 'Login ou senha inválidos!' })

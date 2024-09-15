@@ -7,7 +7,7 @@ const control = require('../controllers/controller')
 // const multer = require('../middlewares/multer')
 
 router.get("/", (req, res) => {
-    res.status(200).json({ Message: "Bem vindo !" })
+    res.status(200).json({ Message: "FG.Hub!", status:200, active: true })
 })
 
 

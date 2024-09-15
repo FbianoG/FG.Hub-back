@@ -8,7 +8,15 @@ const cors = require('cors');
 const app = express()
 const port = process.env.PORT
 
-app.use(cors());
+const corsOptions = {
+    rigin: 'https://fghub.vercel.app',
+    methods: 'GET,,PUT,POST,DELETE',
+    credentials: true,
+    optionsSuccessStatus: 204,
+    exposedHeaders: 'Authorization'
+}
+
+app.use(cors(corsOptions));
 app.use(express.static('public'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
